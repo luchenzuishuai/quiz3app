@@ -16,7 +16,8 @@ lab: Assignment3
       <div id="nav">
         <router-link to="/">Part10</router-link> |
         <router-link to="/part2">Part11</router-link> |
-        <router-link to="/part3">Part12</router-link>
+        <router-link to="/part3">Part12</router-link> |
+        <router-link to="/part4">Part13</router-link>
       </div>
       <router-view />
     </div>

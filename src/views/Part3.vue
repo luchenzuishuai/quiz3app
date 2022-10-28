@@ -8,118 +8,56 @@ lab: Assignment3 */
     <div class='ques1'>
       <!--  search for magnitude greater than 5.0 -->
       <div style="display: flex; flex-direction: column">
-        <span class="ques">✅ Ques12: Repeat part b, from question 10, and show a pie chart which has labels either inside or outside each pie slice, and whichoccupies about 70% to 90% of the screen.</span>
+        <span class="ques">✅ Ques12:  Count the total number words and count for each individual word. Then count the number of word pairs that occur more than one time.</span>
+        <span class="tip">Tip：Text field highly adaptive</span>
       </div>
     </div>
     <el-divider></el-divider>
-     <el-input v-model="store1" placeholder="first store" style="width: 150px"></el-input>
-        <el-input v-model="store2" placeholder="second store" style="width: 150px"></el-input>
-    <el-button type="primary" icon="el-icon-search" @click="clickFn">Get Data</el-button>
-    <!-- graph area -->
-    <!-- The width and height of the area corresponding to the echarts must be given, otherwise it will not be loaded -->
-    <div v-loading="loading" ref="graph" key="1" class="graph"></div>
+     <el-row type="flex" justify="space-around" align="middle">
+      <el-input type="textarea" autosize placeholder="input text" v-model="text" style="width:40%">
+      </el-input>
+      <el-button type="primary" icon="el-icon-search" @click="clickFn">Search</el-button>
+    </el-row>
+
+    <!-- 结果显示 -->
+    <h3>Result 1-word</h3>
+    <el-table v-loading="loading" :data="data1List" style="width: 100%">
+      <el-table-column prop="words" label="words" align="center">
+      </el-table-column>
+      <el-table-column prop="occurrenceTimes" label="occurrenceTimes"  align="center">
+      </el-table-column>
+    </el-table>
+
+    <h3>Result 2-word pairs</h3>
+    <el-table v-loading="loading" :data="data2List" style="width: 100%">
+       <el-table-column prop="words" label="words" align="center">
+      </el-table-column>
+      <el-table-column prop="occurrenceTimes" label="occurrenceTimes"  align="center">
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
-import * as echarts from 'echarts/core'
-import {
-  TitleComponent,
-  TooltipComponent,
-  LegendComponent,
-  GridComponent
-} from 'echarts/components'
-import { PieChart, BarChart } from 'echarts/charts'
-import { LabelLayout } from 'echarts/features'
-import { CanvasRenderer } from 'echarts/renderers'
-echarts.use([
-  TitleComponent,
-  TooltipComponent,
-  LegendComponent,
-  GridComponent,
-  BarChart,
-  PieChart,
-  CanvasRenderer,
-  LabelLayout
-])
 export default {
-  async mounted () {
-    // 在created中获取数据，没有成功渲染到echarts方法解决
-    // 解决方法：在mounted中去拿数据，等数据获取完了，才去渲染
-    await this.getDataList()
-    // 元素挂载与渲染到dom树上完毕。页面渲染完毕时，去获取实例；created阶段只是实例创建完毕，页面并没有渲染完毕
-    this.drawPie()
-  },
   data () {
     return {
-      dataList: [],
+      data1List: [],
+      data2List: [],
       loading: false,
-      store1: 2,
-      store2: 4,
-      type: false
+      text: ''
     }
   },
   methods: {
     async clickFn () {
-      await this.getDataList()
-      this.drawPie()
-    },
-    async getDataList () {
+      this.data1List = []
+      this.data2List = []
       this.loading = true
-      // get quake data[0-1]、[1-2]、[2-3]、[3-4]、[4-5]
-      const { data } = await this.$http.get('quiz2/fetchQ10b', {
-        params: {
-          store1: this.store1,
-          store2: this.store2
-        }
-      })
-      this.dataList = data.map(item => {
-        const obj = {
-          name: item.store,
-          value: item.num
-        }
-        return obj
-      })
-      console.log(this.dataList)
-      this.drawPie()
+      const { data } = await this.$http.post(`/quiz3/fetchAnswerOfQ12?text=${this.text}`)
+      this.data1List = data.wordAndOccurrenceTimes
+      this.data2List = data.wordPairAndOccurrenceTimes
       this.loading = false
-    },
-    drawPie () {
-      const mychart = echarts.init(this.$refs.graph)
-      const option = {
-        title: {
-          text: 'Distribution of food quantity in stores Graph',
-          subtext: 'Tip: Place the mouse on the graph to display the quantity',
-          left: 'center'
-        },
-        tooltip: {
-          position: 'top'
-        },
-        legend: {
-          orient: 'vertical',
-          left: '20%'
-        },
-        series: [
-          {
-            name: 'Access From',
-            type: 'pie',
-            radius: '60%',
-            // data: [
-            //   { value: 1048, name: 'Search Engine' },
-            // ],
-            data: this.dataList,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
-          }
-        ]
-      }
-      mychart.setOption(option)
-      this.$message.success('Loading succeeded~')
+      this.$message.success('Loading succeeded')
     }
   }
 }
