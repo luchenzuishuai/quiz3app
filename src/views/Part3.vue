@@ -53,7 +53,9 @@ export default {
       this.data1List = []
       this.data2List = []
       this.loading = true
-      const { data } = await this.$http.post(`/quiz3/fetchAnswerOfQ12?text=${this.text}`)
+      const fd = new FormData()
+      fd.append('text', this.text)
+      const { data } = await this.$http.post('/quiz3/fetchAnswerOfQ12', fd)
       this.data1List = data.wordAndOccurrenceTimes
       this.data2List = data.wordPairAndOccurrenceTimes
       this.loading = false

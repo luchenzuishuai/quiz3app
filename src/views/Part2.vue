@@ -48,7 +48,10 @@ export default {
   methods: {
     async clickFn () {
       this.loading = true
-      const { data } = await this.$http.post(`/quiz3/findLocationOfCharacter?characters=${this.characters}&text=${this.text}`)
+      const fd = new FormData()
+      fd.append('text', this.text)
+      fd.append('characters', this.characters)
+      const { data } = await this.$http.post('/quiz3/findLocationOfCharacter', fd)
       this.dataList = data
       console.log(data)
       this.loading = false

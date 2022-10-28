@@ -69,7 +69,9 @@ export default {
   methods: {
     async clickFn () {
       this.loading = true
-      const { data } = await this.$http.post(`/quiz3/fetchAnswerOfQ12?text=${this.text}`)
+      const fd = new FormData()
+      fd.append('text', this.text)
+      const { data } = await this.$http.post('/quiz3/fetchAnswerOfQ12', fd)
       console.log(data)
       this.time = data.timeTaken
       console.log(this.time)
@@ -81,7 +83,9 @@ export default {
     async getDataList () {
       this.loading = true
       // get quake data[0-1]、[1-2]、[2-3]、[3-4]、[4-5]
-      const { data } = await this.$http.post('/quiz3/countCharacterNumberOfString?text=' + this.text)
+      const fd = new FormData()
+      fd.append('text', this.text)
+      const { data } = await this.$http.post('/quiz3/countCharacterNumberOfString?', fd)
       this.dataList = data.characterAndOccurrenceTimesList.map(item => ({ value: item.occurrenceTimes, name: item.character }))
       this.drawPie()
       this.loading = false

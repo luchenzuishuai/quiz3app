@@ -43,7 +43,9 @@ export default {
   methods: {
     async clickFn () {
       this.loading = true
-      const { data } = await this.$http.post('/quiz3/countCharacterNumberOfString?text=' + this.text)
+      const fd = new FormData()
+      fd.append('text', this.text)
+      const { data } = await this.$http.post('/quiz3/countCharacterNumberOfString', fd)
       this.count = data.characterNumber
       this.loading = false
       this.$message.success('Loading succeeded')
