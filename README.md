@@ -2,7 +2,7 @@
 
 ## Project setup
 ```
-npm install test github
+npm install test github 1
 ```
 
 ### Compiles and hot-reloads for development
